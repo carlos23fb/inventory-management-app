@@ -1,0 +1,99 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+
+h1 a,
+h2 a {
+    color: black;
+    font-family: IBM Plex Sans, sans-serif;
+}
+
+
+.page-header {
+    background-color: whitesmoke;
+    margin-top: 0;
+    padding: 20px 20px 20px 40px;
+}
+
+.content {
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: IBM Plex Sans, sans-serif;
+}
+
+.date {
+    color: #828282;
+}
+
+.save {
+    float: right;
+}
+
+.edit {
+    float: right;
+}
+
+.post-form textarea,
+.post-form input {
+    width: 100%;
+}
+
+.top-menu,
+.top-menu:hover,
+.top-menu:visited {
+    color: #ffffff;
+    float: right;
+    font-size: 26pt;
+    margin-right: 20px;
+}
+
+.post {
+    margin-bottom: 70px;
+}
+
+.post h2 a,
+.post h2 a:visited {
+    color: #000000;
+}
+
+/* .parent {
+    height: auto;
+    width: auto;
+    display: grid;
+    grid-gap: 4rem;
+    grid-template-columns: repeat(3, 1fr);
+} */
+
+.card-body {
+    box-shadow: 0 0 20px 7px rgba(0, 0, 0, 0.1);
+    height: auto;
+}
+
+.card {
+    margin: 20px 10px;
+    display: flex;
+    height: auto;
+}
+
+.profile-card {
+    padding: 50px;
+}
+
+
+.post-card {
+    padding: 50px;
+}
+
+.login-card {
+    padding: 50px;
+}
