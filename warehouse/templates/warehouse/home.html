@@ -2,4 +2,9 @@
 
 {% block body %}
 <h2>Home</h2>
+{% if message %}
+<div class="alert alert-success" role="alert">
+  {{message}}
+</div>
+{% endif %}
 {% endblock body %}

@@ -4,33 +4,33 @@ from django.db import models
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=50, null=True)
+    name = models.CharField(max_length=50, null=True, unique=True)
 
     def __str__(self):
         return f"{self.name}"
 
 
 class WareHouse(models.Model):
-    warehouse = models.CharField(max_length=50, null=True)
+    warehouse = models.CharField(max_length=50, null=True, unique=True)
 
     def __str__(self):
         return f"{self.warehouse}"
 
 
 class Unit(models.Model):
-    unit = models.CharField(max_length=50, null=True)
+    unit = models.CharField(max_length=50, null=True, unique=True)
 
     def __str__(self):
         return f"{self.unit}"
 
 
 class Product(models.Model):
-    productName = models.CharField(max_length=50, null=True, blank=False)
+    product_name = models.CharField(max_length=50, null=True, blank=False)
     unit = models.ForeignKey(Unit, on_delete=models.PROTECT)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
-    cuantity = models.PositiveIntegerField()
-    created_date = models.DateTimeField(auto_now=False, auto_now_add=False)
-    description = models.CharField(max_length=150)
+    quantity = models.PositiveIntegerField()
+    created_date = models.DateTimeField(auto_now=True, auto_now_add=False)
+    description = models.CharField(max_length=150, blank=True)
 
     def __str__(self):
-        return f"Product: {self.productName} Cuantity: {self.cuantity} {self.unit} "
+        return f"Product: {self.product_name} Quantity: {self.quantity} {self.unit} "

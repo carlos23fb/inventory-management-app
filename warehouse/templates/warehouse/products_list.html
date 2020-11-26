@@ -1,0 +1,36 @@
+{% extends "warehouse/layout.html" %}
+{% block body %}
+<br />
+<h2>
+  Products >> <span class="badge badge-secondary">Add items to order</span>
+</h2>
+<br />
+<div class="content">
+  <div class="row">
+    {% for product in products %}
+
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">
+            <a href=""> {{product.product_name}} </a>
+          </h4>
+          <h6 class="card-subtitle mb-2 ">Category: {{product.category}}</h6>
+          <h6 class="card-subtitle mb-2 ">Quantity: {{product.quantity}} {{product.unit}}</h6>
+          <br>
+          <h6 class="card-subtitle mb-2 text-muted">{{product.description}}</h6>
+          <p class="card-text">{{product.text | truncatewords:50 }}</p>
+          <h6 class="card-subtitle mb-2 text-muted">
+            Publicado: {{product.created_date}}
+          </h6>
+          <a href="" class="card-link"
+            ><button type="button" class="btn btn-success">Add to Order ></button></a
+          >
+        </div>
+      </div>
+    </div>
+
+    {% endfor %}
+  </div>
+</div>
+{% endblock body %}
