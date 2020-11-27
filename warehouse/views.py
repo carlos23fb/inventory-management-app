@@ -1,6 +1,8 @@
 from .forms import ProductForm, CategoryForm, UnitForm
 from django.shortcuts import redirect, render
-from .models import Product
+from .models import GeneralOrder, Product
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 
 # Create your views here.
@@ -57,3 +59,27 @@ def new_unit(request):
         return render(request, 'warehouse/unit_edit.html', {
             "form_unit": form_unit
         })
+
+
+def orders_list(request):
+    orders = GeneralOrder.objects.all()
+    return render(request, 'warehouse/orders_list.html', {
+        'orders': orders
+    })
+
+
+def order(request, order_id):
+    order = GeneralOrder.objects.get(pk=order_id)
+    return render(request, "warehouse/order.html", {
+        "order": order,
+        "products": order.orders.all(),
+        "non_products": Product.objects.exclude(orders=order).all()
+    })
+
+
+def add(request, order_id):
+    if request.method == "POST":
+        order = GeneralOrder.objects.get(pk=order_id)
+        product = Product.objects.get(pk=int(request.POST["product"]))
+        product.orders.add(order)
+        return HttpResponseRedirect(reverse('order', args=(order_id,)))

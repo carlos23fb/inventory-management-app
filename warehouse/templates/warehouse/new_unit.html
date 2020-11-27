@@ -1,0 +1,15 @@
+{% extends "warehouse/layout.html" %}
+
+{% block body %}
+<h2>Add Unit</h2>
+<form class="ui form" action="{% url 'new_unit' %}" method="POST">
+    {% csrf_token %}
+  <div class="field">
+    <label for="">Unit</label>
+    {{ form_unit }}
+  </div>
+  <input class="ui button" type="submit" />
+</form>
+<br>
+<a href="{% url 'home' %}">View Tasks</a>
+{% endblock %}

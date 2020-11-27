@@ -82,7 +82,8 @@ h6 {
 .card {
     margin: 20px 10px;
     display: flex;
-    height: auto;
+    height: 250px;
+    width: 250px;
 }
 
 .profile-card {
