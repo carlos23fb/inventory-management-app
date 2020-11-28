@@ -1,7 +1,7 @@
 <html>
   <head>
     <title>My WareHouse</title>
-    <!-- CSS -->
+  
     {% include 'warehouse/links.html' %}
   </head>
   <div class="page-header">
@@ -20,13 +20,10 @@ Category</button></a>
 Unit</button></a>
 
     {% endif %}
-    
-  
-
-    <h1><a href="/">Inventory Managment</a></h1>
+    <h2><a href="/">Inventory Managment</a></h2>
   </div>
   {% include 'warehouse/navbar.html' %}
-  <br />
+  
    <div class="container">
       {% block body %}
       {% endblock body %}
