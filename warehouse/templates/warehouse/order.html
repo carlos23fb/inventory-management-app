@@ -6,25 +6,33 @@
   <li>Warehouse: {{order.warehouse}}</li>
   <li>Date Created: {{order.date_created}}</li>
 </ul>
-<br />
-<h2>Products</h2>
+
+<h4>Products</h4>
 <ul
   ul>
   {% for product in products %}
-  <li>{{ product }} {{product.unit}}</li>
+  <li>{{ product }}</li>
   {% empty %}
   <li>No products.</li>
   {% endfor %}
 </ul>
-<br />
+
+<h2>Items</h2>
+<ul>
+  {% for item in items %}
+  <li>{{item.product.product_name}} {{item.item_quantity}} {{item.product.unit}}</li>
+  {% empty %}
+  <li>No Items.</li>
+  {% endfor %}
+</ul>
 <br>
 <h2>Add Product from List</h2>
 <br>
-<br>
+
 <form action="{% url 'add' order.id %}" method="POST">
 {% csrf_token %}
-<table id="data" class="table table-striped table-bordered" style="width:100%">
-        <thead>
+<table id="data" class="table table-striped " style="width:100%">
+        <thead class="thead-dark ">
             <tr>
                 
                 <th>Name</th>
@@ -43,7 +51,7 @@
                 <td>{{product.category}}</td>
                 <td>{{product.quantity}}</td>
                 <td>{{product.description}}</td>
-                <td><input type="submit" value="Add"></td>
+                <td><input type="submit" class="btn btn-success" value="Add"></td>
             </tr>
           {% endfor %}
         </tbody>
@@ -67,9 +75,15 @@
 <br>
 
 
+<br>
+<br>
+<a href="{% url 'home' %}"><button type="button" class="btn btn-info">Back to Home</button></a>
+<br>
+<br>
+<br>
+<br>
+<br>
 
-
-<a href="{% url 'home' %}">Home</a>
 
 {% endblock %}
 

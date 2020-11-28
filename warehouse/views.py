@@ -1,6 +1,6 @@
 from .forms import ProductForm, CategoryForm, UnitForm
 from django.shortcuts import redirect, render
-from .models import GeneralOrder, Product
+from .models import GeneralOrder, Product, ItemQuantity
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
@@ -69,11 +69,13 @@ def orders_list(request):
 
 
 def order(request, order_id):
+    items = ItemQuantity.objects.filter(order_id=order_id)
     order = GeneralOrder.objects.get(pk=order_id)
     return render(request, "warehouse/order.html", {
+        "items": items,
         "order": order,
         "products": order.orders.all(),
-        "non_products": Product.objects.exclude(orders=order).all()
+        "non_products": Product.objects.exclude(order=order).all()
     })
 
 
@@ -81,5 +83,5 @@ def add(request, order_id):
     if request.method == "POST":
         order = GeneralOrder.objects.get(pk=order_id)
         product = Product.objects.get(pk=int(request.POST["product"]))
-        product.orders.add(order)
+        product.order.add(order)
         return HttpResponseRedirect(reverse('order', args=(order_id,)))

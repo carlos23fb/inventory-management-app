@@ -1,6 +1,5 @@
 from django.db import models
-from django.db.models.deletion import PROTECT
-from django.db.models.fields import PositiveIntegerField
+from django.db.models.fields.related import ForeignKey
 
 # Create your models here.
 
@@ -32,7 +31,7 @@ class GeneralOrder(models.Model):
     warehouse = models.ForeignKey(WareHouse, on_delete=models.PROTECT)
 
     def __str__(self):
-        return f"{self.pk} Warehouse: {self.warehouse}"
+        return f"Order Id:{self.pk} Warehouse: {self.warehouse}"
 
 
 class Product(models.Model):
@@ -42,17 +41,17 @@ class Product(models.Model):
     quantity = models.PositiveIntegerField()
     created_date = models.DateTimeField(auto_now=True, auto_now_add=False)
     description = models.CharField(max_length=150, blank=True)
-    orders = models.ManyToManyField(
+    order = models.ManyToManyField(
         GeneralOrder, blank=True, related_name="orders")
 
     def __str__(self):
-        return f"{self.product_name}"
+        return f"{self.product_name} {self.unit}"
 
 
-class Order(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    product_quantity = PositiveIntegerField()
-    warehouse = models.ForeignKey(WareHouse, on_delete=models.PROTECT)
+class ItemQuantity(models.Model):
+    product = ForeignKey(Product, on_delete=models.PROTECT)
+    item_quantity = models.PositiveIntegerField(null=True)
+    order = ForeignKey(GeneralOrder, on_delete=models.PROTECT, null=True)
 
     def __str__(self):
-        return f"{self.pk} Warehouse: {self.warehouse}, Product: {self.product}, Quantity: {self.product_quantity}"
+        return f"{self.order} Items: {self.item_quantity} {self.product}"
