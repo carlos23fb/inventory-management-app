@@ -1,6 +1,8 @@
+from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.fields import CharField
+from django.db.models.fields import CharField, PositiveIntegerField
 from django.db.models.fields.related import ForeignKey
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 
@@ -59,3 +61,24 @@ class ItemQuantity(models.Model):
 
     def __str__(self):
         return f"{self.order} Items: {self.item_quantity} {self.product}"
+
+
+class WarehouseStock(models.Model):
+    warehouse_id = ForeignKey(
+        WareHouse, null=True, on_delete=models.PROTECT, related_name="warehouse_id")
+    product_id = ForeignKey(
+        WareHouse, null=True, on_delete=models.PROTECT, related_name="product_id")
+    stock = PositiveIntegerField()
+
+
+class Customer(models.Model):
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=200, null=True)
+    phone = models.CharField(max_length=200, null=True)
+    email = models.CharField(max_length=200, null=True)
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
+    user_warehouse = models.ForeignKey(
+        WareHouse, on_delete=models.PROTECT, null=True)
+
+    def __str__(self):
+        return f"User: {self.user} Full Name: {self.full_name} Warehouse: {self.user_warehouse}"
