@@ -7,7 +7,11 @@ urlpatterns = [
     path('product/new', views.product_new, name='product_new'),
     path('category/new', views.new_category, name="new_category"),
     path('unit/new', views.new_unit, name='new_unit'),
+    path('orders/new', views.new_order, name='new_order'),
     path('orders', views.orders_list, name="orders_list"),
     path('<int:order_id>', views.order, name="order"),
-    path("<int:order_id>/add", views.add, name="add")
+    path("<int:order_id>/add", views.add, name="add"),
+    path('<int:order_id>/add_item', views.add_item, name="add_item"),
+    path("add/item", views.item_order, name="item_order")
+
 ]

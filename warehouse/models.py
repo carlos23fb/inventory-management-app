@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.fields import CharField
 from django.db.models.fields.related import ForeignKey
 
 # Create your models here.
@@ -28,10 +29,11 @@ class WareHouse(models.Model):
 
 class GeneralOrder(models.Model):
     date_created = models.DateField(auto_now=True)
+    order_name = CharField(max_length=200, null=True)
     warehouse = models.ForeignKey(WareHouse, on_delete=models.PROTECT)
 
     def __str__(self):
-        return f"Order Id:{self.pk} Warehouse: {self.warehouse}"
+        return f"Order Id:{self.pk} Warehouse: {self.warehouse} Order Name:{self.order_name}"
 
 
 class Product(models.Model):
@@ -49,9 +51,11 @@ class Product(models.Model):
 
 
 class ItemQuantity(models.Model):
-    product = ForeignKey(Product, on_delete=models.PROTECT)
+    product = ForeignKey(Product, on_delete=models.PROTECT,
+                         null=True, blank=True)
     item_quantity = models.PositiveIntegerField(null=True)
-    order = ForeignKey(GeneralOrder, on_delete=models.PROTECT, null=True)
+    order = ForeignKey(GeneralOrder, on_delete=models.PROTECT,
+                       null=True, blank=True)
 
     def __str__(self):
         return f"{self.order} Items: {self.item_quantity} {self.product}"

@@ -1,4 +1,4 @@
-from .forms import ProductForm, CategoryForm, UnitForm
+from .forms import ProductForm, CategoryForm, UnitForm, OrderForm, ItemForm
 from django.shortcuts import redirect, render
 from .models import GeneralOrder, Product, ItemQuantity
 from django.http import HttpResponseRedirect
@@ -69,11 +69,15 @@ def orders_list(request):
 
 
 def order(request, order_id):
+    form = ItemForm()
     items = ItemQuantity.objects.filter(order_id=order_id)
     order = GeneralOrder.objects.get(pk=order_id)
+    all_products = Product.objects.all().order_by("-created_date")
     return render(request, "warehouse/order.html", {
+        "form": form,
         "items": items,
         "order": order,
+        "all_products": all_products,
         "products": order.orders.all(),
         "non_products": Product.objects.exclude(order=order).all()
     })
@@ -85,3 +89,35 @@ def add(request, order_id):
         product = Product.objects.get(pk=int(request.POST["product"]))
         product.order.add(order)
         return HttpResponseRedirect(reverse('order', args=(order_id,)))
+
+
+def add_item(request, order_id):
+    if request.method == "POST":
+        form = ItemForm(request.POST)
+        print(request.POST["item_quantity"])
+        if form.is_valid():
+            item = ItemQuantity(
+                item_quantity=form.cleaned_data["item_quantity"], order=GeneralOrder.objects.get(pk=order_id), product=Product.objects.get(pk=request.POST["product_id"]))
+            item.save()
+            return HttpResponseRedirect(reverse('order', args=(order_id,)))
+
+
+def new_order(request):
+    if request.method == "POST":
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.save()
+            return redirect("orders_list")
+    else:
+        form = OrderForm()
+        return render(request, "warehouse/new_order.html", {
+            "form": form
+        })
+
+
+def item_order(request):
+    form = ItemForm()
+    return render(request, "warehouse/item.html", {
+        "form": form
+    })
