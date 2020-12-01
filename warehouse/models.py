@@ -69,6 +69,11 @@ class WarehouseStock(models.Model):
         Product, null=True, on_delete=models.PROTECT, related_name="product_id")
     stock = PositiveIntegerField()
 
+    def __str__(self):
+        return f"{self.warehouse_id} {self.product_id.product_name} Stock: {self.stock}"
+
+    
+
 
 class Customer(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
