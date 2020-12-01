@@ -1,6 +1,6 @@
-from .forms import ProductForm, CategoryForm, UnitForm, OrderForm, ItemForm
+from .forms import ProductForm, CategoryForm, UnitForm, OrderForm, ItemForm, WarehouseStockForm
 from django.shortcuts import redirect, render
-from .models import GeneralOrder, Product, ItemQuantity
+from .models import GeneralOrder, Product, ItemQuantity, WarehouseStock
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
@@ -100,6 +100,39 @@ def add_item(request, order_id):
                 item_quantity=form.cleaned_data["item_quantity"], order=GeneralOrder.objects.get(pk=order_id), product=Product.objects.get(pk=request.POST["product_id"]))
             item.save()
             return HttpResponseRedirect(reverse('order', args=(order_id,)))
+
+
+def add_stock(request):
+    if request.method == "POST":
+        stock = int(request.POST["stock"])
+        product = Product.objects.get(pk=request.POST["product_id"])
+        product_quantity = product.quantity
+        update_value = stock + product_quantity
+        print(update_value)
+        Product.objects.filter(pk=request.POST["product_id"]).update(
+            quantity=update_value)
+
+        if WarehouseStock.objects.filter(product_id=request.POST["product_id"], warehouse_id=request.POST["warehouse_id"]).exists():
+            warehouse_item = WarehouseStock.objects.get(
+                product_id=request.POST["product_id"])
+            item_quantity = warehouse_item.stock
+            item_update = stock + item_quantity
+            WarehouseStock.objects.filter(
+                product_id=request.POST["product_id"]).update(stock=item_update)
+        else:
+            form = WarehouseStockForm(request.POST)
+            form.save()
+        return HttpResponseRedirect(reverse("add_stock"))
+
+    else:
+        return redirect("stock")
+
+
+def stock(request):
+    form = WarehouseStockForm()
+    return render(request, "warehouse/add_stock.html", {
+        "form": form
+    })
 
 
 def new_order(request):

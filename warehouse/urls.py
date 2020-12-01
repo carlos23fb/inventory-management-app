@@ -12,6 +12,8 @@ urlpatterns = [
     path('<int:order_id>', views.order, name="order"),
     path("<int:order_id>/add", views.add, name="add"),
     path('<int:order_id>/add_item', views.add_item, name="add_item"),
-    path("add/item", views.item_order, name="item_order")
+    path("add/item", views.item_order, name="item_order"),
+    path("stock", views.stock, name="stock"),
+    path("add/stock", views.add_stock, name="add_stock")
 
 ]

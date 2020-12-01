@@ -1,5 +1,5 @@
 from django import forms
-from .models import ItemQuantity, Product, Category, Unit, GeneralOrder
+from .models import ItemQuantity, Product, Category, Unit, GeneralOrder, WarehouseStock
 
 
 class ProductForm(forms.ModelForm):
@@ -25,7 +25,8 @@ class UnitForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['unit'].widget.attrs.update({'class': 'form-control col-3'})
+        self.fields['unit'].widget.attrs.update(
+            {'class': 'form-control col-3'})
 
 
 class OrderForm(forms.ModelForm):
@@ -39,3 +40,10 @@ class ItemForm(forms.ModelForm):
     class Meta:
         model = ItemQuantity
         fields = ("item_quantity", "order", "product")
+
+
+class WarehouseStockForm(forms.ModelForm):
+
+    class Meta:
+        model = WarehouseStock
+        fields = ('warehouse_id', 'product_id', 'stock')
