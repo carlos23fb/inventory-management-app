@@ -16,6 +16,7 @@ def products_list(request):
     products = Product.objects.all().order_by("-created_date")
     return render(request, 'warehouse/products_list.html', {
         'products': products
+        
     })
 
 
