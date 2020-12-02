@@ -2,10 +2,14 @@
 
 
 {% block body %}
+<br>
   <h2>New Order</h2>
+  <br>
+  <br>
   <form  method="POST" class="post-form">
       {% csrf_token %}
-      {{form.as_p}}
+      <label for="order_name">Name of the new order</label>
+      {{form.order_name}}
 <button type="submit" class="btn btn-light save">Save</button>
   </form>
 {% endblock body %}

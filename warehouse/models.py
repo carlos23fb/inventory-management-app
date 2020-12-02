@@ -25,13 +25,13 @@ class WareHouse(models.Model):
     warehouse = models.CharField(max_length=50, null=True, unique=True)
 
     def __str__(self):
-        return f"{self.warehouse}"
+        return f"{self.id} {self.warehouse}"
 
 
 class GeneralOrder(models.Model):
     date_created = models.DateField(auto_now=True)
     order_name = CharField(max_length=200, null=True)
-    warehouse = models.ForeignKey(WareHouse, on_delete=models.PROTECT)
+    warehouse = models.ForeignKey(WareHouse, on_delete=models.PROTECT, blank=True, null=True)
 
     def __str__(self):
         return f"Order Id:{self.pk} Warehouse: {self.warehouse} Order Name:{self.order_name}"
@@ -72,8 +72,6 @@ class WarehouseStock(models.Model):
     def __str__(self):
         return f"{self.warehouse_id} {self.product_id.product_name} Stock: {self.stock}"
 
-    
-
 
 class Customer(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
@@ -82,7 +80,7 @@ class Customer(models.Model):
     email = models.CharField(max_length=200, null=True)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
     user_warehouse = models.ForeignKey(
-        WareHouse, on_delete=models.PROTECT, null=True)
+        WareHouse, on_delete=models.PROTECT, null=True, related_name="warehouse_user")
 
     def __str__(self):
         return f"User: {self.user} Full Name: {self.full_name} Warehouse: {self.user_warehouse}"

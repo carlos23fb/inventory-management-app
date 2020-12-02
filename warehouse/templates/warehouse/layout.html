@@ -6,8 +6,10 @@
   </head>
   <div class="page-header">
     {% if user.is_authenticated %}
-    
+    <a href="{% url 'logout' %}"><button type="button" class="btn btn-danger">Logout</button></a>
     <a href="{% url 'product_new' %}" class="top-menu" style="color: black">
+      
+      
 </svg><button type="button" class="btn btn-outline-info">Add New
 Product +</button></a>
 
@@ -27,6 +29,14 @@ Unit</button></a>
 
  <a href="{% url 'stock' %}" class="top-menu" style="color: black">
 </svg><button type="button" class="btn btn-outline-info">Add Stock to Warehouse</button></a>
+
+<h5 class="top-menu" style="color: grey;">Hi, {{request.user.username}} </h5>
+
+
+    {% else %}
+    <a href="{% url 'login' %}" class="top-menu" style="color: black">
+</svg><button type="button" class="btn btn-outline-info">Login</button></a>
+
 
     {% endif %}
     <h2><a href="/">Inventory Managment</a></h2>

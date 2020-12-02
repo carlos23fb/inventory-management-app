@@ -1,0 +1,11 @@
+{% extends "warehose/layout.html" %}
+
+{% block body %}
+  {% if message %}
+  <div class="alert alert-warning" role="alert">
+  {{message}}
+</div>
+<a href="{% url 'home' %}"> Back to home page </a>
+<a href="{% url 'login' %}"> Login </a>
+{% endif %}
+{% endblock body %}
