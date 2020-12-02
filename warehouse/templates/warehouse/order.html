@@ -30,24 +30,22 @@
 <table id="data" class="table table-striped " style="width:100%">
         <thead class="thead-dark ">
             <tr>               
-                <th>Name</th>
-                <th>Categorie</th>
+                <th>Warehouse</th>
+                <th>Product</th>
                 <th>Stock</th>
-                <th>Description</th>
                 <th>Quantiy</th>
                 <th></th>                
             </tr>
         </thead>
         <tbody>
-          {% for product in all_products %}
+          {% for item in stock %}
            <form action="{% url 'add_item' order.id %}" method="POST">
             {% csrf_token %}
             <tr>
-                <input type="number" hidden name="product_id" id="" value="{{product.id}}">
-                <td>{{product.product_name}}</td>
-                <td>{{product.category}}</td>
-                <td>{{product.quantity}}</td>
-                <td>{{product.description}}</td>
+                <input type="number" hidden name="product_id" id="" value="{{item.product_id.id}}">
+                <td>{{item.warehouse_id.warehouse}}</td>
+                <td>{{item.product_id}}</td>
+                <td>{{item.stock}}</td>
                 <td>{{form.item_quantity}}</td>
                 <td></td>
                 <td><input type="submit" class="btn btn-success" value="Add"></td>
@@ -57,13 +55,11 @@
         </tbody>
         <tfoot>
             <tr>
-                <th>Name</th>
-                <th>Categorie</th>
+                <th>Warehouse</th>
+                <th>Product</th>
                 <th>Stock</th>
-                <th>Description</th>
                 <th>Quantiy</th>
-                <th></th>
-                
+                <th></th> 
             </tr>
         </tfoot>
     </table>

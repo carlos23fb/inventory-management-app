@@ -80,15 +80,13 @@ def orders_list(request):
 def order(request, order_id):
     form = ItemForm()
     warehouse_name = Customer.objects.get(user=request.user.id)
-    warehouse = warehouse_name.user_warehouse
     id_warehouse = warehouse_name.user_warehouse.id
+    stock = WarehouseStock.objects.filter(warehouse_id=id_warehouse)
     print(id_warehouse)
-    stock = WarehouseStock.objects.all()
     items = ItemQuantity.objects.filter(order_id=order_id)
     order = GeneralOrder.objects.get(pk=order_id)
     all_products = Product.objects.all().order_by("-created_date")
     return render(request, "warehouse/order.html", {
-        "warehouse": warehouse,
         "stock": stock,
         "form": form,
         "items": items,
@@ -106,36 +104,6 @@ def add(request, order_id):
         product = Product.objects.get(pk=int(request.POST["product"]))
         product.order.add(order)
         return HttpResponseRedirect(reverse('order', args=(order_id,)))
-
-
-@login_required(login_url="login")
-def add_item(request, order_id):
-    if request.method == "POST":
-        form = ItemForm(request.POST)
-        print(request.POST["item_quantity"])
-        if form.is_valid():
-            item = ItemQuantity(
-                item_quantity=form.cleaned_data["item_quantity"], order=GeneralOrder.objects.get(pk=order_id), product=Product.objects.get(pk=request.POST["product_id"]))
-            item.save()
-            return HttpResponseRedirect(reverse('order', args=(order_id,)))
-
-
-@login_required(login_url="login")
-def new_order(request):
-    if request.method == "POST":
-        warehouse_name = Customer.objects.get(user=request.user.id)
-        id_warehouse = warehouse_name.user_warehouse.id
-        form = OrderForm(request.POST)
-        if form.is_valid():
-            order = GeneralOrder(
-                order_name=form.cleaned_data["order_name"], warehouse=WareHouse.objects.get(pk=id_warehouse))
-            order.save()
-            return redirect("orders_list")
-    else:
-        form = OrderForm()
-        return render(request, "warehouse/new_order.html", {
-            "form": form
-        })
 
 
 @login_required(login_url="login")
@@ -163,6 +131,54 @@ def add_stock(request):
 
     else:
         return redirect("stock")
+
+
+@login_required(login_url="login")
+def add_item(request, order_id):
+    if request.method == "POST":
+        form = ItemForm(request.POST)
+        print(request.POST["item_quantity"])
+        if form.is_valid():
+            product = Product.objects.get(pk=request.POST["product_id"])
+            product_quantity = product.quantity
+            update_value = product_quantity - form.cleaned_data["item_quantity"]
+            form.cleaned_data["item_quantity"]
+            print(update_value)
+            Product.objects.filter(pk=request.POST["product_id"]).update(
+                quantity=update_value)
+
+            warehouse_name = Customer.objects.get(user=request.user.id)
+            id_warehouse = warehouse_name.user_warehouse.id
+            warehouse_item = WarehouseStock.objects.get(
+                product_id=request.POST["product_id"], warehouse_id=id_warehouse)
+            item_quantity = warehouse_item.stock
+            item_update = item_quantity - form.cleaned_data["item_quantity"]
+            WarehouseStock.objects.filter(
+                product_id=request.POST["product_id"], warehouse_id=id_warehouse).update(stock=item_update)
+
+        item = ItemQuantity(
+            item_quantity=form.cleaned_data["item_quantity"], order=GeneralOrder.objects.get(pk=order_id), product=Product.objects.get(pk=request.POST["product_id"]))
+
+        item.save()
+        return HttpResponseRedirect(reverse('order', args=(order_id,)))
+
+
+@login_required(login_url="login")
+def new_order(request):
+    if request.method == "POST":
+        warehouse_name = Customer.objects.get(user=request.user.id)
+        id_warehouse = warehouse_name.user_warehouse.id
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            order = GeneralOrder(
+                order_name=form.cleaned_data["order_name"], warehouse=WareHouse.objects.get(pk=id_warehouse))
+            order.save()
+            return redirect("orders_list")
+    else:
+        form = OrderForm()
+        return render(request, "warehouse/new_order.html", {
+            "form": form
+        })
 
 
 @login_required(login_url="login")
