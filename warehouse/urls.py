@@ -1,4 +1,3 @@
-from warehouse.views import remove_item
 from django.urls import path
 from . import views
 
@@ -13,6 +12,8 @@ urlpatterns = [
     path('orders', views.orders_list, name="orders_list"),
     path('<int:order_id>', views.order, name="order"),
     path("<int:order_id>/add", views.add, name="add"),
+    path("<int:order_id>/deliver", views.deliver, name="deliver"),
+    path("<int:order_id>/reject", views.reject, name="reject"),
     path('<int:order_id>/add_item', views.add_item, name="add_item"),
     path("add/item", views.item_order, name="item_order"),
     path("<int:order_id>/remove", views.remove_item, name="remove_item"),

@@ -29,9 +29,16 @@ class WareHouse(models.Model):
 
 
 class GeneralOrder(models.Model):
+
+    STATUS = (('Pending', 'Pending'),
+              ('Delivered', 'Delivered'),
+              ('Rejected', 'Rejected'))
+
     date_created = models.DateField(auto_now=True)
     order_name = CharField(max_length=200, null=True)
-    warehouse = models.ForeignKey(WareHouse, on_delete=models.PROTECT, blank=True, null=True)
+    warehouse = models.ForeignKey(
+        WareHouse, on_delete=models.PROTECT, blank=True, null=True)
+    status = models.CharField(max_length=200, null=True, choices=STATUS, default='Pending')
 
     def __str__(self):
         return f"Order Id:{self.pk} Warehouse: {self.warehouse} Order Name:{self.order_name}"

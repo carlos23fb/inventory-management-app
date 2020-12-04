@@ -16,7 +16,10 @@ def home(request):
 
 @login_required(login_url="login")
 def dashboard_admin(request):
-    return render(request, 'warehouse/admin_dashboard.html')
+    orders = GeneralOrder.objects.all()
+    return render(request, 'warehouse/admin_dashboard.html', {
+        'orders': orders
+    })
 
 
 @login_required(login_url="login")
@@ -83,6 +86,7 @@ def orders_list(request):
 
 @login_required(login_url="login")
 def order(request, order_id):
+    item_number = ItemQuantity.objects.filter(order_id=order_id).count()
     form = ItemForm()
     warehouse_name = Customer.objects.get(user=request.user.id)
     id_warehouse = warehouse_name.user_warehouse.id
@@ -94,7 +98,8 @@ def order(request, order_id):
         "stock": stock,
         "form": form,
         "items": items,
-        "order": order
+        "order": order,
+        "item_number": item_number
     })
 
 
@@ -142,7 +147,8 @@ def add_item(request, order_id):
             product = Product.objects.get(pk=request.POST["product_pk"])
             print(request.POST["product_pk"])
             product_quantity = product.quantity
-            update_value = product_quantity - form.cleaned_data["item_quantity"]
+            update_value = product_quantity - \
+                form.cleaned_data["item_quantity"]
             form.cleaned_data["item_quantity"]
             Product.objects.filter(pk=request.POST["product_pk"]).update(
                 quantity=update_value)
@@ -161,6 +167,16 @@ def add_item(request, order_id):
 
         item.save()
         return HttpResponseRedirect(reverse('order', args=(order_id,)))
+
+
+def deliver(request, order_id):
+    GeneralOrder.objects.filter(pk=order_id).update(status="Delivered")
+    return redirect('orders_list')
+
+
+def reject(request, order_id):
+    GeneralOrder.objects.filter(pk=order_id).update(status="Rejected")
+    return redirect('orders_list')
 
 
 @login_required(login_url="login")
