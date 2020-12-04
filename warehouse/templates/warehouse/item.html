@@ -5,7 +5,7 @@
   <h2>Item to order</h2>
   <form  method="POST" class="post-form">
       {% csrf_token %}
-      {{form.as_table}}
+      {{form.as_p}}
 <button type="submit" class="btn btn-light save">Save</button>
   </form>
 {% endblock body %}

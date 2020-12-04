@@ -14,7 +14,7 @@ class Unit(models.Model):
         return f"{self.unit}"
 
 
-class Category(models.Model):
+class Categorie(models.Model):
     name = models.CharField(max_length=50, null=True, unique=True)
 
     def __str__(self):
@@ -40,7 +40,7 @@ class GeneralOrder(models.Model):
 class Product(models.Model):
     product_name = models.CharField(max_length=50, null=True, blank=False)
     unit = models.ForeignKey(Unit, on_delete=models.PROTECT)
-    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    categorie = models.ForeignKey(Categorie, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
     created_date = models.DateTimeField(auto_now=True, auto_now_add=False)
     description = models.CharField(max_length=150, blank=True)
