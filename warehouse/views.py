@@ -85,15 +85,11 @@ def order(request, order_id):
     print(id_warehouse)
     items = ItemQuantity.objects.filter(order_id=order_id)
     order = GeneralOrder.objects.get(pk=order_id)
-    all_products = Product.objects.all().order_by("-created_date")
     return render(request, "warehouse/order.html", {
         "stock": stock,
         "form": form,
         "items": items,
-        "order": order,
-        "all_products": all_products,
-        "products": order.orders.all(),
-        "non_products": Product.objects.exclude(order=order).all()
+        "order": order
     })
 
 
@@ -137,29 +133,49 @@ def add_stock(request):
 def add_item(request, order_id):
     if request.method == "POST":
         form = ItemForm(request.POST)
-        print(request.POST["item_quantity"])
         if form.is_valid():
-            product = Product.objects.get(pk=request.POST["product_id"])
+            product = Product.objects.get(pk=request.POST["product_pk"])
+            print(request.POST["product_pk"])
             product_quantity = product.quantity
             update_value = product_quantity - form.cleaned_data["item_quantity"]
             form.cleaned_data["item_quantity"]
-            print(update_value)
-            Product.objects.filter(pk=request.POST["product_id"]).update(
+            Product.objects.filter(pk=request.POST["product_pk"]).update(
                 quantity=update_value)
 
             warehouse_name = Customer.objects.get(user=request.user.id)
             id_warehouse = warehouse_name.user_warehouse.id
             warehouse_item = WarehouseStock.objects.get(
-                product_id=request.POST["product_id"], warehouse_id=id_warehouse)
+                product_id=request.POST["product_pk"], warehouse_id=id_warehouse)
             item_quantity = warehouse_item.stock
             item_update = item_quantity - form.cleaned_data["item_quantity"]
             WarehouseStock.objects.filter(
-                product_id=request.POST["product_id"], warehouse_id=id_warehouse).update(stock=item_update)
+                product_id=request.POST["product_pk"], warehouse_id=id_warehouse).update(stock=item_update)
 
         item = ItemQuantity(
-            item_quantity=form.cleaned_data["item_quantity"], order=GeneralOrder.objects.get(pk=order_id), product=Product.objects.get(pk=request.POST["product_id"]))
+            item_quantity=form.cleaned_data["item_quantity"], order=GeneralOrder.objects.get(pk=order_id), product=Product.objects.get(pk=request.POST["product_pk"]))
 
         item.save()
+        return HttpResponseRedirect(reverse('order', args=(order_id,)))
+
+
+@login_required(login_url="login")
+def remove_item(request, order_id):
+    if request.method == "POST":
+        product = Product.objects.get(pk=request.POST["product_id"])
+        product_quantity = product.quantity
+        update_value = product_quantity + int(request.POST["item_quantity"])
+        Product.objects.filter(pk=request.POST["product_id"]).update(
+            quantity=update_value)
+
+        warehouse_name = Customer.objects.get(user=request.user.id)
+        id_warehouse = warehouse_name.user_warehouse.id
+        warehouse_item = WarehouseStock.objects.get(
+            product_id=request.POST["product_id"], warehouse_id=id_warehouse)
+        item_quantity = warehouse_item.stock
+        item_update = item_quantity + int(request.POST["item_quantity"])
+        WarehouseStock.objects.filter(
+            product_id=request.POST["product_id"], warehouse_id=id_warehouse).update(stock=item_update)
+        ItemQuantity.objects.filter(pk=request.POST["item_id"]).delete()
         return HttpResponseRedirect(reverse('order', args=(order_id,)))
 
 

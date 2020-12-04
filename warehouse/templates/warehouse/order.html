@@ -5,28 +5,43 @@
   <li>Warehouse: {{order.warehouse}}</li>
   <li>Date Created: {{order.date_created}}</li>
 </ul>
-<h4>Products</h4>
-<ul
-  ul>
-  {% for product in products %}
-  <li>{{ product }}</li>
-  {% empty %}
-  <li>No products.</li>
-  {% endfor %}
-</ul>
-<h2>Items</h2>
-<ul>
-  {% for item in items %}
-  <li>{{item.product.product_name}} {{item.item_quantity}} {{item.product.unit}}</li>
-  {% empty %}
+<br>
+<h2>Current Items in this order</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Product</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Unit</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <form action="{% url 'remove_item' order.id %}" method="POST">
+      {% csrf_token %}
+    <tr>
+      <input type="number" name="item_id" hidden id="" value="{{item.id}}">
+      <input type="number" name="item_quantity" hidden id="" value="{{item.item_quantity}}">
+      <input type="number" name="product_id" hidden id="" value="{{item.product.id}}">
+      <th scope="row">{{item.id}}</th>
+      <td>{{item.product.product_name}}</td>
+      <td>{{item.item_quantity}}</td>
+      <td>{{item.product.unit}}</td>
+      <td><input type="submit" class="btn btn-danger" value="Remove"></td>
+    </tr>
+    </form>
+    {% empty %}
   <li>No Items.</li>
-  {% endfor %}
-</ul>
+     {% endfor %}
+  </tbody>
+</table>
 <br>
 <div>
 <br>
+<h2>Add more Items to order</h2>
 <br>
-<h2>Add Items to order</h2>
 <table id="data" class="table table-striped " style="width:100%">
         <thead class="thead-dark ">
             <tr>               
@@ -42,7 +57,7 @@
            <form action="{% url 'add_item' order.id %}" method="POST">
             {% csrf_token %}
             <tr>
-                <input type="number" hidden name="product_id" id="" value="{{item.product_id.id}}">
+                <input type="text" hidden name="product_pk" id="" value="{{item.product_id.id}}" >
                 <td>{{item.warehouse_id.warehouse}}</td>
                 <td>{{item.product_id}}</td>
                 <td>{{item.stock}}</td>
