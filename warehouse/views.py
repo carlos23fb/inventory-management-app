@@ -12,7 +12,30 @@ from .decorators import unauthenticated, allowed_users
 
 @login_required(login_url="login")
 def home(request):
-    return render(request, 'warehouse/home.html')
+    group = request.user.groups.all()[0].name
+    if group == "customer":
+        return redirect('home_customer')
+    else:
+        return redirect("dashboard_admin")
+
+
+def home_customer(request):
+    warehouse_name = Customer.objects.get(user=request.user.id)
+    id_warehouse = warehouse_name.user_warehouse.id
+    orders = GeneralOrder.objects.filter(
+        status="Pending", warehouse=id_warehouse)
+    pending_orders = GeneralOrder.objects.filter(
+        status="Pending", warehouse=id_warehouse).count()
+    delivered = GeneralOrder.objects.filter(
+        status="Delivered", warehouse=id_warehouse).count()
+    rejected = GeneralOrder.objects.filter(
+        status="Rejected", warehouse=id_warehouse).count()
+    return render(request, 'warehouse/home_customer.html', {
+        'orders': orders,
+        'pending': pending_orders,
+        'delivered': delivered,
+        'rejected': rejected
+    })
 
 
 @login_required(login_url="login")
@@ -43,6 +66,7 @@ def products_list(request):
 
 
 @login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def product_new(request):
     if request.method == 'POST':
         form = ProductForm(request.POST)
@@ -58,6 +82,7 @@ def product_new(request):
 
 
 @login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def new_category(request):
     if request.method == "POST":
         form_category = CategoryForm(request.POST)
@@ -72,6 +97,7 @@ def new_category(request):
 
 
 @login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def new_unit(request):
     if request.method == "POST":
         form_unit = UnitForm(request.POST)
@@ -88,6 +114,7 @@ def new_unit(request):
 
 
 @login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def orders_list(request):
     orders = GeneralOrder.objects.filter(status="Pending")
     return render(request, 'warehouse/orders_list.html', {
@@ -96,22 +123,57 @@ def orders_list(request):
 
 
 @login_required(login_url="login")
+def customer_orders(request):
+    warehouse_name = Customer.objects.get(user=request.user.id)
+    id_warehouse = warehouse_name.user_warehouse.id
+    orders = GeneralOrder.objects.filter(
+        status="Pending", warehouse=id_warehouse)
+    pending_orders = GeneralOrder.objects.filter(
+        status="Pending", warehouse=id_warehouse).count()
+    delivered = GeneralOrder.objects.filter(
+        status="Delivered", warehouse=id_warehouse).count()
+    rejected = GeneralOrder.objects.filter(
+        status="Rejected", warehouse=id_warehouse).count()
+    return render(request, 'warehouse/orders_list.html', {
+        'orders': orders,
+        'pending': pending_orders,
+        'delivered': delivered,
+        'rejected': rejected
+    })
+
+
+@login_required(login_url="login")
 def order(request, order_id):
     group = request.user.groups.all()[0].name
-    item_number = ItemQuantity.objects.filter(order_id=order_id).count()
-    form = ItemForm()
+    order = GeneralOrder.objects.get(pk=order_id)
+
+    if group == "customer" and (order.status == "Rejected" or order.status == "Rejected"):
+        return render(request, 'warehouse/not_allow.html')
+    else:
+        item_number = ItemQuantity.objects.filter(order_id=order_id).count()
+        form = ItemForm()
+        warehouse_name = Customer.objects.get(user=request.user.id)
+        id_warehouse = warehouse_name.user_warehouse.id
+        stock = WarehouseStock.objects.filter(warehouse_id=id_warehouse)
+        items = ItemQuantity.objects.filter(order_id=order_id)
+        return render(request, "warehouse/order.html", {
+            "stock": stock,
+            "form": form,
+            "items": items,
+            "order": order,
+            "item_number": item_number,
+            'group': group
+        })
+
+
+@login_required(login_url="login")
+def customer_stock(request):
     warehouse_name = Customer.objects.get(user=request.user.id)
     id_warehouse = warehouse_name.user_warehouse.id
     stock = WarehouseStock.objects.filter(warehouse_id=id_warehouse)
-    items = ItemQuantity.objects.filter(order_id=order_id)
-    order = GeneralOrder.objects.get(pk=order_id)
-    return render(request, "warehouse/order.html", {
-        "stock": stock,
-        "form": form,
-        "items": items,
-        "order": order,
-        "item_number": item_number,
-        'group': group
+
+    return render(request, "warehouse/customer_stock.html", {
+        "stock": stock
     })
 
 
@@ -136,7 +198,7 @@ def add_stock(request):
 
         if WarehouseStock.objects.filter(product_id=request.POST["product_id"], warehouse_id=request.POST["warehouse_id"]).exists():
             warehouse_item = WarehouseStock.objects.get(
-                product_id=request.POST["product_id"])
+                product_id=request.POST["product_id"], warehouse_id=request.POST["warehouse_id"])
             item_quantity = warehouse_item.stock
             item_update = stock + item_quantity
             WarehouseStock.objects.filter(
@@ -160,30 +222,38 @@ def add_item(request, order_id):
             update_value = product_quantity - \
                 form.cleaned_data["item_quantity"]
             form.cleaned_data["item_quantity"]
-            Product.objects.filter(pk=request.POST["product_pk"]).update(
-                quantity=update_value)
+            if update_value >= 0:
+                Product.objects.filter(pk=request.POST["product_pk"]).update(
+                    quantity=update_value)
 
-            warehouse_name = Customer.objects.get(user=request.user.id)
-            id_warehouse = warehouse_name.user_warehouse.id
-            warehouse_item = WarehouseStock.objects.get(
-                product_id=request.POST["product_pk"], warehouse_id=id_warehouse)
-            item_quantity = warehouse_item.stock
-            item_update = item_quantity - form.cleaned_data["item_quantity"]
-            WarehouseStock.objects.filter(
-                product_id=request.POST["product_pk"], warehouse_id=id_warehouse).update(stock=item_update)
+                warehouse_name = Customer.objects.get(user=request.user.id)
+                id_warehouse = warehouse_name.user_warehouse.id
+                warehouse_item = WarehouseStock.objects.get(
+                    product_id=request.POST["product_pk"], warehouse_id=id_warehouse)
+                item_quantity = warehouse_item.stock
+                item_update = item_quantity - \
+                    form.cleaned_data["item_quantity"]
+                WarehouseStock.objects.filter(
+                    product_id=request.POST["product_pk"], warehouse_id=id_warehouse).update(stock=item_update)
 
-        item = ItemQuantity(
-            item_quantity=form.cleaned_data["item_quantity"], order=GeneralOrder.objects.get(pk=order_id), product=Product.objects.get(pk=request.POST["product_pk"]))
+                item = ItemQuantity(
+                    item_quantity=form.cleaned_data["item_quantity"], order=GeneralOrder.objects.get(pk=order_id), product=Product.objects.get(pk=request.POST["product_pk"]))
 
-        item.save()
-        return HttpResponseRedirect(reverse('order', args=(order_id,)))
+                item.save()
+                return HttpResponseRedirect(reverse('order', args=(order_id,)))
+            else:
+                return HttpResponseRedirect(reverse('order', args=(order_id,)))
 
 
+@login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def deliver(request, order_id):
     GeneralOrder.objects.filter(pk=order_id).update(status="Delivered")
     return redirect('orders_list')
 
 
+@login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def reject(request, order_id):
     GeneralOrder.objects.filter(pk=order_id).update(status="Rejected")
     return redirect('orders_list')
@@ -220,7 +290,7 @@ def new_order(request):
             order = GeneralOrder(
                 order_name=form.cleaned_data["order_name"], warehouse=WareHouse.objects.get(pk=id_warehouse))
             order.save()
-            return redirect("orders_list")
+            return redirect("customer_orders")
     else:
         form = OrderForm()
         return render(request, "warehouse/new_order.html", {
@@ -229,6 +299,7 @@ def new_order(request):
 
 
 @login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def stock(request):
     form = WarehouseStockForm()
     return render(request, "warehouse/add_stock.html", {
@@ -237,6 +308,7 @@ def stock(request):
 
 
 @login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def item_order(request):
     form = ItemForm()
     return render(request, "warehouse/item.html", {

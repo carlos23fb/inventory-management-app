@@ -1,0 +1,34 @@
+<html>
+
+<head>
+    <title>My WareHouse</title>
+
+    {% include 'warehouse/links.html' %}
+</head>
+<div class="page-header">
+    <h2><a class="nav-link top-menu" style="color: #918F8C;" href="{% url 'home' %}">Inventory Managment</a>
+    </h2>
+    {% if user.is_authenticated %}
+    <a href="{% url 'logout' %}"><button type="button" class="btn btn-danger">Logout</button></a>
+ 
+
+    <h5 class="top-menu" style="color: grey;">Hi, {{request.user.username}} </h5>
+
+
+    {% else %}
+    <a href="{% url 'login' %}" class="top-menu" style="color: black">
+        </svg><button type="button" class="btn btn-outline-info">Login</button></a>
+
+
+    {% endif %}
+
+</div>
+{% include 'warehouse/navbar_customer.html' %}
+<br>
+<div class="container">
+    {% block body %}
+    {% endblock body %}
+</div>
+{% include 'warehouse/script.html' %}
+
+</html>

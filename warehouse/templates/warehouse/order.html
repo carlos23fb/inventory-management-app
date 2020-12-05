@@ -1,4 +1,4 @@
-{% extends "warehouse/layout.html" %}
+{% extends "warehouse/layout_customer.html" %}
 {% block body %}
 <h1>Order {{ order.id }}</h1>
 <ul>
@@ -69,11 +69,12 @@
         <th>Quantiy</th>
         
         
+        
       </tr>
     </thead>
     <tbody>
       {% for item in stock %}
-      <form action="{% url 'add_item' order.id %}" id="form-id" method="POST">
+      <form action="{% url 'add_item' order.id %}"  method="POST">
         {% csrf_token %}
         <tr>
           <td><input type="text" hidden name="product_pk" id="" value="{{item.product_id.id}}"></td>
@@ -81,7 +82,7 @@
           <td>{{item.product_id}}</td>
           <td>{{item.stock}}</td>
           <td>{{form.item_quantity}}</td>
-          <td><input type="submit" class="btn btn-success" id="your-id" value="Add"></td>
+          <td><input type="submit" class="btn btn-success"  value="Add"></td>
         </tr>
       </form>
       {% endfor %}
