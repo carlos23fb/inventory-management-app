@@ -21,17 +21,7 @@
             <i style="color: #918f8c" class="fas fa-bars"></i>
         </button>
         <!-- Navbar Search-->
-        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-            <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search"
-                    aria-describedby="basic-addon2" />
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="button">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </div>
-        </form>
+
     </nav>
     <div id="layoutSidenav" style="color: #918f8c">
         <div id="layoutSidenav_nav" style="color: #918f8c">
@@ -53,29 +43,36 @@
                             </div>
                             Home
                         </a>
-                        <div style="color: #918f8c" class="sb-sidenav-menu-heading">
-                            Interface
-                        </div>
-                        <a style="color: #918f8c" class="nav-link collapsed" href="#" data-toggle="collapse"
-                            data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                        <a style="color: #918f8c" class="url-link nav-link" href="{% url 'products' %}">
                             <div class="sb-nav-link-icon">
-                                <i style="color: #918f8c" class="fas fa-columns"></i>
+                                <i style="color: #918f8c" class="fas fa-store"></i>
                             </div>
-                            Layouts
-                            <div class="sb-sidenav-collapse-arrow">
-                                <i style="color: #918f8c" class="fas fa-angle-down"></i>
-                            </div>
+                            Products List
                         </a>
-                        <div style="color: #918f8c" class="collapse" id="collapseLayouts" aria-labelledby="headingOne"
-                            data-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a style="color: #918f8c" class="nav-link" href="layout-static.html">Static
-                                    Navigation</a>
-                                <a style="color: #918f8c" class="nav-link" href="layout-sidenav-light.html">Light
-                                    Sidenav</a>
-                            </nav>
-                        </div>
-                    </div>
+                        <a style="color: #918f8c" class="url-link nav-link" href="{% url 'new_category' %}">
+                            <div class="sb-nav-link-icon">
+                                <i style="color: #918f8c" class="fas fa-tags"></i>
+                            </div>
+                            Create Product Categorie
+                        </a>
+                        <a style="color: #918f8c" class="url-link nav-link" href="{% url 'new_unit' %}">
+                            <div class="sb-nav-link-icon">
+                                <i style="color: #918f8c" class="fas fa-box"></i>
+                            </div>
+                            Create Unit of measure
+                        </a>
+                        <a style="color: #918f8c" class="url-link nav-link" href="{% url 'product_new' %}">
+                            <div class="sb-nav-link-icon">
+                                <i style="color: #918f8c" class="fas fa-plus-square"></i>
+                            </div>
+                            Create new Product
+                        </a>
+                        <a style="color: #918f8c" class="url-link nav-link" href="{% url 'new_order' %}">
+                            <div class="sb-nav-link-icon">
+                                <i style="color: #918f8c" class="fas fa-clipboard-list"></i>
+                            </div>
+                            Create Order
+                        </a>
                 </div>
             </nav>
         </div>
@@ -89,10 +86,14 @@
                     <div class="row">
 
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-warning text-white mb-4">
-                                <div class="card-body">Warning Card</div>
+                            <div class="card bg-warning text-white mb-4 text-center">
+                                <div class="card-body">
+                                    <h2>Pending</h2>
+                                </div>
+                                <h2>{{pending}}  </h2>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">View Details</a>
+                                    <a class="small text-white stretched-link"
+                                    href="{% url 'orders_list' %}">View Pending Orders</a>
                                     <div class="small text-white">
                                         <i class="fas fa-angle-right"></i>
                                     </div>
@@ -100,10 +101,14 @@
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-success text-white mb-4">
-                                <div class="card-body">Success Card</div>
+                            <div class="card bg-success text-white mb-4 text-center">
+                                <div class="card-body">
+                                    <h2>Delivered</h2>
+                                </div>
+                                <h2>{{delivered}}</h2>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">View Details</a>
+                                    <a class="small text-white stretched-link"
+                                    href="#">View Pending Orders</a>
                                     <div class="small text-white">
                                         <i class="fas fa-angle-right"></i>
                                     </div>
@@ -111,10 +116,13 @@
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-danger text-white mb-4">
-                                <div class="card-body">Danger Card</div>
+                            <div class="card bg-danger text-white mb-4 text-center">
+                                <div class="card-body">
+                                    <h2>Rejected</h2>
+                                </div>
+                                <h2>{{rejected}}</h2>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">View Details</a>
+                                    <a class="small text-white stretched-link" href="#"></a>
                                     <div class="small text-white">
                                         <i class="fas fa-angle-right"></i>
                                     </div>
@@ -125,7 +133,7 @@
                     <br />
                     <br />
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-8">
                             <h2>Last Orders</h2>
                             <br />
                             <table class="table" id="data">
@@ -136,18 +144,19 @@
                                         <th scope="col">Warehouse</th>
                                         <th scope="col">Created Date</th>
                                         <th scope="col">Status</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for order in orders %}
-                                    <tr>
+                                    <tr class="table-warning">
                                         <td>{{order.id}}</td>
                                         <td>{{order.order_name}}</td>
                                         <td>{{order.warehouse}}</td>
                                         <td>{{order.date_created}}</td>
                                         <td>{{order.status}}</td>
                                         <td>
-                                            <a href="{% url 'order' order.id %}">
+                                            <a style="color: #5AA745;" href="{% url 'order' order.id %}">
                                                 Check order Status
                                             </a>
                                         </td>

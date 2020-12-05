@@ -29,6 +29,11 @@ class CategoryForm(forms.ModelForm):
         model = Categorie
         fields = ('name',)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs.update(
+            {'class': 'form-control col-6'})
+
 
 class UnitForm(forms.ModelForm):
 
@@ -46,6 +51,11 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = GeneralOrder
         fields = ('order_name', 'warehouse')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['order_name'].widget.attrs.update(
+            {'class': 'form-control col-6'})
 
 
 class ItemForm(forms.ModelForm):

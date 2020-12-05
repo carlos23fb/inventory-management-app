@@ -16,9 +16,19 @@ def home(request):
 
 @login_required(login_url="login")
 def dashboard_admin(request):
-    orders = GeneralOrder.objects.all()
+    orders = GeneralOrder.objects.filter(
+        status="Pending").order_by("date_created")
+    pending_orders = GeneralOrder.objects.filter(
+        status="Pending").count()
+    delivered = GeneralOrder.objects.filter(
+        status="Delivered").count()
+    rejected = GeneralOrder.objects.filter(
+        status="Rejected").count()
     return render(request, 'warehouse/admin_dashboard.html', {
-        'orders': orders
+        'orders': orders,
+        "pending": pending_orders,
+        "rejected": rejected,
+        "delivered": delivered
     })
 
 
@@ -27,7 +37,6 @@ def products_list(request):
     products = Product.objects.all().order_by("-created_date")
     return render(request, 'warehouse/products_list.html', {
         'products': products
-
     })
 
 
@@ -78,7 +87,7 @@ def new_unit(request):
 
 @login_required(login_url="login")
 def orders_list(request):
-    orders = GeneralOrder.objects.all()
+    orders = GeneralOrder.objects.filter(status="Pending")
     return render(request, 'warehouse/orders_list.html', {
         'orders': orders
     })
@@ -91,7 +100,6 @@ def order(request, order_id):
     warehouse_name = Customer.objects.get(user=request.user.id)
     id_warehouse = warehouse_name.user_warehouse.id
     stock = WarehouseStock.objects.filter(warehouse_id=id_warehouse)
-    print(id_warehouse)
     items = ItemQuantity.objects.filter(order_id=order_id)
     order = GeneralOrder.objects.get(pk=order_id)
     return render(request, "warehouse/order.html", {
@@ -119,7 +127,6 @@ def add_stock(request):
         product = Product.objects.get(pk=request.POST["product_id"])
         product_quantity = product.quantity
         update_value = stock + product_quantity
-        print(update_value)
         Product.objects.filter(pk=request.POST["product_id"]).update(
             quantity=update_value)
 
@@ -145,7 +152,6 @@ def add_item(request, order_id):
         form = ItemForm(request.POST)
         if form.is_valid():
             product = Product.objects.get(pk=request.POST["product_pk"])
-            print(request.POST["product_pk"])
             product_quantity = product.quantity
             update_value = product_quantity - \
                 form.cleaned_data["item_quantity"]

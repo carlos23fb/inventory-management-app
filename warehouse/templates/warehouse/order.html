@@ -10,11 +10,11 @@
   <a href="{% url 'deliver' order.id %}"><button type="button" class="btn
 btn-success">Deliver</button></a>
 {% else %}
-  <p>Recuerda que para entregar un pedido, este al menos tiene que tener un elemento </p>
+  <p style="color: forestgreen;">Rememeber that to deliver an order, it must have at least one element in it</p>
 {% endif %}
 
 {% if item_number > 0 %}
-<p>Recuerda que para eliminar esta orden primero no tiene que tener ningun elemento</p>
+<p style="color: coral;">To delete an order, it must not have any elements in it</p>
 {% else %}
 <a href="{% url 'reject' order.id %}"><button type="button" class="btn
 btn-danger">Reject</button></a>
@@ -60,38 +60,30 @@ btn-danger">Reject</button></a>
   <table id="data" class="table table-striped " style="width:100%">
     <thead class="thead-dark ">
       <tr>
-        
+        <th></th>
         <th>Warehouse</th>
         <th>Product</th>
         <th>Stock</th>
         <th>Quantiy</th>
-        <th></th>
+        
+        
       </tr>
     </thead>
     <tbody>
       {% for item in stock %}
-      <form action="{% url 'add_item' order.id %}" method="POST">
+      <form action="{% url 'add_item' order.id %}" id="form-id" method="POST">
         {% csrf_token %}
         <tr>
-          <input type="text" hidden name="product_pk" id="" value="{{item.product_id.id}}">
+          <td><input type="text" hidden name="product_pk" id="" value="{{item.product_id.id}}"></td>
           <td>{{item.warehouse_id.warehouse}}</td>
           <td>{{item.product_id}}</td>
           <td>{{item.stock}}</td>
           <td>{{form.item_quantity}}</td>
-          <td><input type="submit" class="btn btn-success" value="Add"></td>
+          <td><input type="submit" class="btn btn-success" id="your-id" value="Add"></td>
         </tr>
       </form>
       {% endfor %}
     </tbody>
-    <tfoot>
-      <tr>
-        
-        <th>Warehouse</th>
-        <th>Product</th>
-        <th>Stock</th>
-        <th>Quantiy</th>
-      </tr>
-    </tfoot>
   </table>
   <br>
   <br>
@@ -102,6 +94,13 @@ btn-danger">Reject</button></a>
   <br>
   <br>
   <br>
+  <script>
+    var form = document.getElementById("form-id");
+
+    document.getElementById("your-id").addEventListener("click", function () {
+    form.submit();
+    });
+  </script>
   <script>
     $(document).ready(function() {
     $('#data').DataTable();

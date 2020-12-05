@@ -1,13 +1,42 @@
 {% extends "warehouse/layout.html" %} {% block body %}
 <h1>Orders</h1>
-<ul>
-  {% for order in orders %}
-  <li>
-    <a href="{% url 'order' order.id %}">
-      Warehouse: {{order.warehouse}} Quantity {{order.product_quantity }} {{order.id}}
-    </a>
-  </li>
-  {% endfor %}
-</ul>
+<div class="row">
+  <div class="col-12">
+    <br />
+    <table class="table" id="data">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Order Name</th>
+          <th scope="col">Warehouse</th>
+          <th scope="col">Created Date</th>
+          <th scope="col">Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr class="table-warning">
+          <td>{{order.id}}</td>
+          <td>{{order.order_name}}</td>
+          <td>{{order.warehouse}}</td>
+          <td>{{order.date_created}}</td>
+          <td>{{order.status}}</td>
+          <td>
+            <a href="{% url 'order' order.id %}">
+              Check order Status
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    $("#data").DataTable();
+  });
+</script>
 
 {% endblock %}

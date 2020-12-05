@@ -34,14 +34,14 @@ class GeneralOrder(models.Model):
               ('Delivered', 'Delivered'),
               ('Rejected', 'Rejected'))
 
-    date_created = models.DateField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
     order_name = CharField(max_length=200, null=True)
     warehouse = models.ForeignKey(
         WareHouse, on_delete=models.PROTECT, blank=True, null=True)
     status = models.CharField(max_length=200, null=True, choices=STATUS, default='Pending')
 
     def __str__(self):
-        return f"Order Id:{self.pk} Warehouse: {self.warehouse} Order Name:{self.order_name}"
+        return f"Order Id:{self.pk} Warehouse: {self.warehouse} Order Name:{self.order_name} Created Date: {self.date_created}"
 
 
 class Product(models.Model):
@@ -49,7 +49,7 @@ class Product(models.Model):
     unit = models.ForeignKey(Unit, on_delete=models.PROTECT)
     categorie = models.ForeignKey(Categorie, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
-    created_date = models.DateTimeField(auto_now=True, auto_now_add=False)
+    created_date = models.DateTimeField(auto_now_add=True)
     description = models.CharField(max_length=150, blank=True)
     order = models.ManyToManyField(
         GeneralOrder, blank=True, related_name="orders")
