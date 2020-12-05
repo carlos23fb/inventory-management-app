@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from .decorators import unauthenticated, allowed_users
 
 
 # Create your views here.
@@ -15,6 +16,7 @@ def home(request):
 
 
 @login_required(login_url="login")
+@allowed_users(allowed_roles=['admin'])
 def dashboard_admin(request):
     orders = GeneralOrder.objects.filter(
         status="Pending").order_by("date_created")
@@ -95,6 +97,7 @@ def orders_list(request):
 
 @login_required(login_url="login")
 def order(request, order_id):
+    group = request.user.groups.all()[0].name
     item_number = ItemQuantity.objects.filter(order_id=order_id).count()
     form = ItemForm()
     warehouse_name = Customer.objects.get(user=request.user.id)
@@ -107,7 +110,8 @@ def order(request, order_id):
         "form": form,
         "items": items,
         "order": order,
-        "item_number": item_number
+        "item_number": item_number,
+        'group': group
     })
 
 
@@ -240,6 +244,7 @@ def item_order(request):
     })
 
 
+@unauthenticated
 def login_view(request):
     if request.method == "POST":
         username = request.POST["username"]

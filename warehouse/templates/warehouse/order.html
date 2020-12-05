@@ -6,18 +6,20 @@
   <li>Date Created: {{order.date_created}}</li>
   <li>Number of items in this order: {{item_number}}</li>
 </ul>
-{% if item_number > 0 %}
-  <a href="{% url 'deliver' order.id %}"><button type="button" class="btn
-btn-success">Deliver</button></a>
-{% else %}
-  <p style="color: forestgreen;">Rememeber that to deliver an order, it must have at least one element in it</p>
-{% endif %}
+{% if group == "admin" %}
+  {% if item_number > 0 %}
+    <a href="{% url 'deliver' order.id %}"><button type="button" class="btn
+  btn-success">Deliver</button></a>
+  {% else %}
+    <p style="color: forestgreen;">Rememeber that to deliver an order, it must have at least one element in it</p>
+  {% endif %}
 
-{% if item_number > 0 %}
-<p style="color: coral;">To delete an order, it must not have any elements in it</p>
-{% else %}
-<a href="{% url 'reject' order.id %}"><button type="button" class="btn
-btn-danger">Reject</button></a>
+  {% if item_number > 0 %}
+  <p style="color: coral;">To delete an order, it must not have any elements in it</p>
+  {% else %}
+  <a href="{% url 'reject' order.id %}"><button type="button" class="btn
+  btn-danger">Reject</button></a>
+  {% endif %}
 {% endif %}
 
 <br>
