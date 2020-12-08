@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .decorators import unauthenticated, allowed_users
-
+import pandas as pd
 
 # Create your views here.
 
@@ -41,6 +41,11 @@ def home_customer(request):
 @login_required(login_url="login")
 @allowed_users(allowed_roles=['admin'])
 def dashboard_admin(request):
+    query = ItemQuantity.objects.all()
+    df = pd.DataFrame.from_dict(query)
+    print("######################")
+    print(df)
+    print("######################")
     orders = GeneralOrder.objects.filter(
         status="Pending").order_by("date_created")
     pending_orders = GeneralOrder.objects.filter(
