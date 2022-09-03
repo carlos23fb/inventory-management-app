@@ -6,9 +6,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .decorators import unauthenticated, allowed_users
-import pandas as pd
+
 
 # Create your views here.
+
 
 @login_required(login_url="login")
 def home(request):
@@ -41,15 +42,6 @@ def home_customer(request):
 @login_required(login_url="login")
 @allowed_users(allowed_roles=['admin'])
 def dashboard_admin(request):
-    items_table = ItemQuantity.objects.all().values()
-    producs_table = Product.objects.all().values()
-    orders_table = GeneralOrder.objects.all().values()
-    df1 = pd.DataFrame.from_dict(items_table)
-    df2 = pd.DataFrame.from_dict(producs_table)
-    df3 = pd.DataFrame.from_dict(orders_table)
-
-    df4 = pd.merge(df1,df3, how='inner', left_on='order_id', right_on='id')
-    df5 = pd.merge(df4,df2, how='inner', left_on='product_id', right_on='id')
     orders = GeneralOrder.objects.filter(
         status="Pending").order_by("date_created")
     pending_orders = GeneralOrder.objects.filter(
@@ -62,8 +54,8 @@ def dashboard_admin(request):
         'orders': orders,
         "pending": pending_orders,
         "rejected": rejected,
-        "delivered": delivered,
-        'data': df5.to_html
+        "delivered": delivered
+        
     })
 
 
@@ -114,7 +106,7 @@ def new_unit(request):
         if form_unit.is_valid():
             form_unit.save()
             return render(request, "warehouse/home.html", {
-                "message": "New Unit has ben created succsesfully"
+                "message": "New Unit has ben created successfully"
             })
     else:
         form_unit = UnitForm()

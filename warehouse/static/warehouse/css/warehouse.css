@@ -85,7 +85,7 @@ h6 {
     margin: 20px 10px;
     display: flex;
     height: auto;
-    width: 250px;
+    width: 300px;
 }
 
 .profile-card {
@@ -99,8 +99,21 @@ h6 {
 
 .login-card {
     padding: 50px;
+    width: 50%;
 }
 
 .url-link{
     color: #918F8C;
+}
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
+    height: 250px;
+}
+
+.contaner{
+    width: auto;
 }

@@ -25,3 +25,5 @@ def allowed_users(allowed_roles=[]):
                 return render(request, 'warehouse/not_allow.html')
         return wrapper_func
     return decorator
+
+

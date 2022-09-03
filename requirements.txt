@@ -1,0 +1,4 @@
+mysqlclient
+Django~=3.2.10
+pandas
+psycopg2
